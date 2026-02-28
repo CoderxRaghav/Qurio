@@ -1,0 +1,12 @@
+{
+  "subject": "Object Oriented Programming With Java",
+  "importance": "Object Oriented Programming With Java builds core exam and practical problem-solving skills.",
+  "uses": [
+    "Supports higher studies and technical interviews",
+    "Improves analytical and implementation ability",
+    "Used in real software and engineering workflows"
+  ],
+  "model": "gemma3:4b",
+  "source": "fallback",
+  "generated_at": "2026-02-28T05:53:34.267022Z"
+}

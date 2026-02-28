@@ -1,0 +1,194 @@
+[
+  {
+    "id": 1,
+    "question": "Why is Java platform-independent? 1 K1 - ? b",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 2,
+    "question": "What is the role of a constructor in a Java class? 1 K1 ? c",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 3,
+    "question": "What is the purpose of the finally block in Java exception handling? 2 K1 ? d",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 4,
+    "question": "How is throw different from throws? 2 K2 4 4 5 , ? 6",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 5,
+    "question": "What is a functional interface? Give an exa _ mple",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 6,
+    "question": "How does Stack differ from Queue? E 14 K2 5",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 7,
+    "question": "What is a GET vs POST request? 1 5 K1 Q GET POST ? | M P SECTION B 9 2",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 8,
+    "question": "Discuss the different data types and control 1structures in Java with 1 K2 examples",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 9,
+    "question": "Explain the concept of multithreading",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 10,
+    "question": "Write a program to implement two 2 K2 J threads printing numbers alternat-ively",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 11,
+    "question": "What is the Stream API in Java? How does it help in functional-style 3 K2 operations? API ? - ? 1 | P a ge QP25EP1_164 | 14-Jul-2025 1:34:49 PM | 103",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 12,
+    "question": "Compare and contrast ArrayList and LinkedList in terms of performance 4 K2 and usage",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 13,
+    "question": "What is Spring Boot? How is it different from the traditional Spring 5 K2 framework? ? ? SECTION C 3",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 14,
+    "question": "Write a Java program to take user input and displa4y the reverse of a string",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 15,
+    "question": "Explain the concept of Java Virtual Machine and Java Runtime 1 K2 E 1 Environment",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 16,
+    "question": "Write a Java program to handle multiple exceptions using try-catch- 2 K3 : 1 finally",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 17,
+    "question": "Write a Java program that creates twuo threads one to print even numbers 2 K3 J and the other for odd numbers",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 18,
+    "question": "What are functional interfaces and how are they implemented using 3 K2 lambda expressions? 2 | P a ge QP25EP1_164 | 14-Jul-2025 1:34:49 PM | 103",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 19,
+    "question": "Describe the role of annotations in Java and how type annotations are 3 K2 used",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 20,
+    "question": "Write a program to demonstrate the use of HashMap and iterate through 4 K3 keys and values",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 21,
+    "question": "Discuss the hierarchy of the CollectioPn framework in Java",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 22,
+    "question": "Differentiate 4 2K2 between List, Set, and Map",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 23,
+    "question": "Explain the concept of Dependency Injection and3 its types in Spring",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  },
+  {
+    "id": 24,
+    "question": "Describe the structure of a basic Spring Boot application",
+    "marks": null,
+    "year": null,
+    "subject": null,
+    "university": "AKTU"
+  }
+]
