@@ -1,9 +1,31 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+const normalizeBaseUrl = (value?: string): string | null => {
+  if (!value) {
+    return null;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+  return trimmed.replace(/\/+$/, "");
+};
+
+const DEFAULT_BASE_URLS = ["/api", "http://127.0.0.1:8000", "http://localhost:8000"];
+const configuredBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL);
+const API_BASE_URLS = configuredBaseUrl
+  ? [configuredBaseUrl, ...DEFAULT_BASE_URLS.filter((url) => url !== configuredBaseUrl)]
+  : DEFAULT_BASE_URLS;
 
 const buildNetworkError = () =>
   new Error(
-    `Cannot reach backend at ${API_BASE_URL}. Make sure FastAPI is running and this origin is allowed by CORS.`,
+    `Unable to contact the AI backend. Start FastAPI on http://127.0.0.1:8000, then refresh and try again.`,
   );
+
+const buildUrl = (baseUrl: string, path: string) => {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${normalizedPath}`;
+};
+
+const isFallbackStatus = (status: number) => [404, 502, 503, 504].includes(status);
 
 export interface UploadResponse {
   message: string;
@@ -102,6 +124,9 @@ const getErrorMessage = async (response: Response): Promise<string> => {
     if (typeof data?.detail === "string") {
       return data.detail;
     }
+    if (typeof data?.detail?.message === "string") {
+      return data.detail.message;
+    }
     if (typeof data?.message === "string") {
       return data.message;
     }
@@ -113,14 +138,35 @@ const getErrorMessage = async (response: Response): Promise<string> => {
 };
 
 const apiFetch = async (path: string, init?: RequestInit): Promise<Response> => {
-  try {
-    return await fetch(`${API_BASE_URL}${path}`, init);
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw buildNetworkError();
+  let fallbackResponse: Response | null = null;
+
+  for (let index = 0; index < API_BASE_URLS.length; index += 1) {
+    const baseUrl = API_BASE_URLS[index];
+    const hasMoreCandidates = index < API_BASE_URLS.length - 1;
+
+    try {
+      const response = await fetch(buildUrl(baseUrl, path), init);
+      if (hasMoreCandidates && isFallbackStatus(response.status)) {
+        fallbackResponse = response;
+        continue;
+      }
+      return response;
+    } catch (error) {
+      if (error instanceof TypeError && hasMoreCandidates) {
+        continue;
+      }
+      if (error instanceof TypeError) {
+        throw buildNetworkError();
+      }
+      throw error;
     }
-    throw error;
   }
+
+  if (fallbackResponse) {
+    return fallbackResponse;
+  }
+
+  throw buildNetworkError();
 };
 
 export const uploadFile = async (file: File, replace = false): Promise<UploadResponse> => {

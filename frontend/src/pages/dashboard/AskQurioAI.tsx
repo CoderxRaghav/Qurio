@@ -102,14 +102,16 @@ const AskQurioAI = () => {
             </span>
           </div>
 
-          {loading ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              Generating exam-oriented answer...
-            </div>
-          ) : (
-            <pre className="text-sm whitespace-pre-wrap break-words">{answer}</pre>
-          )}
+          <div className="rounded-xl border border-slate-300 bg-white p-4 shadow-[0_10px_28px_rgba(0,0,0,0.2)]">
+            {loading ? (
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                Generating exam-oriented answer...
+              </div>
+            ) : (
+              <pre className="text-sm text-slate-900 whitespace-pre-wrap break-words">{answer}</pre>
+            )}
+          </div>
         </div>
       )}
     </div>
