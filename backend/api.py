@@ -48,20 +48,14 @@ app = FastAPI()
 # DATA_DIR = os.path.abspath(os.path.join(BASE_DIR, "../data/raw_papers"))
 # OUTPUT_DIR = os.path.abspath(os.path.join(BASE_DIR, "../outputs"))
 
-#CORS BLOCK
+# CORS BLOCK
+# Keep this permissive for local development so frontend requests do not fail
+# when the dev server port/origin changes (Vite auto-port, LAN URL, webviews, etc.).
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "http://localhost:8081",
-        "http://127.0.0.1:8081",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
-    # Accept any localhost/127.0.0.1 dev port (Vite may auto-increment ports).
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_origin_regex=r".*",
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
