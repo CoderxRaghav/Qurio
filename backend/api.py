@@ -66,10 +66,123 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 HISTORY_FILE = os.path.join(OUTPUT_DIR, "history.json")
 ANALYSIS_FILE = os.path.join(OUTPUT_DIR, "analysis.json")
-OLLAMA_MODEL = "gemma3:4b"
+LLM_BACKEND = os.getenv("LLM_BACKEND", "ollama").strip().lower()
+LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:4b").strip()
+LLM_API_KEY = os.getenv("LLM_API_KEY", "").strip()
+LLM_BASE_URL = os.getenv(
+    "LLM_BASE_URL",
+    "http://127.0.0.1:11434" if LLM_BACKEND == "ollama" else "https://api.openai.com/v1",
+).strip().rstrip("/")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+def llm_hint():
+    if LLM_BACKEND == "ollama":
+        return f"Ensure Ollama is running at {LLM_BASE_URL} with model '{LLM_MODEL}'."
+    return (
+        f"Check LLM_BACKEND='{LLM_BACKEND}', LLM_BASE_URL='{LLM_BASE_URL}', "
+        "LLM_MODEL, and LLM_API_KEY."
+    )
+
+
+def post_json(url, payload, timeout=90, headers=None):
+    data = json.dumps(payload).encode("utf-8")
+    request_headers = {"Content-Type": "application/json"}
+    if headers:
+        request_headers.update(headers)
+
+    req = urlrequest.Request(
+        url,
+        data=data,
+        headers=request_headers,
+        method="POST",
+    )
+    with urlrequest.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def extract_message_content(message):
+    if not isinstance(message, dict):
+        return ""
+
+    content = message.get("content", "")
+    if isinstance(content, str):
+        return content.strip()
+
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, dict):
+                text = item.get("text", "")
+                if text:
+                    parts.append(str(text))
+        return "\n".join(parts).strip()
+
+    return str(content).strip()
+
+
+def call_llm_text(prompt, timeout=90, json_mode=False, max_tokens=None, temperature=0.2, top_p=0.9):
+    backend = LLM_BACKEND
+
+    if backend == "ollama":
+        payload = {
+            "model": LLM_MODEL,
+            "prompt": prompt,
+            "stream": False,
+        }
+        if json_mode:
+            payload["format"] = "json"
+
+        options = {}
+        if max_tokens is not None:
+            options["num_predict"] = max_tokens
+        if temperature is not None:
+            options["temperature"] = temperature
+        if top_p is not None:
+            options["top_p"] = top_p
+        if options:
+            payload["options"] = options
+
+        body = post_json(f"{LLM_BASE_URL}/api/generate", payload, timeout=timeout)
+        text = str(body.get("response", "")).strip()
+        if not text:
+            raise ValueError("Model returned empty response")
+        return text
+
+    if backend in {"openai", "openai_compatible", "openai-compatible", "openrouter", "groq"}:
+        if not LLM_API_KEY:
+            raise ValueError("LLM_API_KEY is required when LLM_BACKEND is not 'ollama'.")
+
+        payload = {
+            "model": LLM_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
+        if temperature is not None:
+            payload["temperature"] = temperature
+        if top_p is not None:
+            payload["top_p"] = top_p
+
+        body = post_json(
+            f"{LLM_BASE_URL}/chat/completions",
+            payload,
+            timeout=timeout,
+            headers={"Authorization": f"Bearer {LLM_API_KEY}"},
+        )
+
+        choices = body.get("choices", [])
+        if not isinstance(choices, list) or not choices:
+            raise ValueError("Model returned no choices")
+
+        text = extract_message_content(choices[0].get("message", {}))
+        if not text:
+            raise ValueError("Model returned empty response")
+        return text
+
+    raise ValueError(f"Unsupported LLM_BACKEND '{LLM_BACKEND}'")
 
 
 # def run_script(script_name):
@@ -208,7 +321,7 @@ def difficulty_label_from_percent(difficulty):
     return "Hard"
 
 
-def call_ollama_subject_analysis(clean_text, questions_text):
+def call_llm_subject_analysis(clean_text, questions_text):
     clean_excerpt = (clean_text or "")[:2500]
     questions_excerpt = (questions_text or "")[:1200]
     prompt = f"""
@@ -225,28 +338,14 @@ Predicted question paper:
 {questions_excerpt}
 """
 
-    payload = {
-        "model": OLLAMA_MODEL,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json",
-    }
-    data = json.dumps(payload).encode("utf-8")
-    req = urlrequest.Request(
-        "http://127.0.0.1:11434/api/generate",
-        data=data,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urlrequest.urlopen(req, timeout=90) as resp:
-        body = json.loads(resp.read().decode("utf-8"))
-        llm_json = parse_llm_json(body.get("response", ""))
-        if not isinstance(llm_json, dict):
-            raise ValueError("Invalid JSON returned by model")
-        return llm_json
+    llm_text = call_llm_text(prompt, timeout=90, json_mode=True)
+    llm_json = parse_llm_json(llm_text)
+    if not isinstance(llm_json, dict):
+        raise ValueError("Invalid JSON returned by model")
+    return llm_json
 
 
-def call_ollama_topic_generation(subject, difficulty_label, count, question_type):
+def call_llm_topic_generation(subject, difficulty_label, count, question_type):
     prompt = f"""
 You are AxisStudy AI, an expert question paper generator.
 Return STRICT JSON only with keys:
@@ -270,28 +369,15 @@ Rules:
 - Keep wording clean and academic.
 """
 
-    payload = {
-        "model": OLLAMA_MODEL,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json",
-    }
-    data = json.dumps(payload).encode("utf-8")
-    req = urlrequest.Request(
-        "http://127.0.0.1:11434/api/generate",
-        data=data,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urlrequest.urlopen(req, timeout=120) as resp:
-        body = json.loads(resp.read().decode("utf-8"))
-        llm_json = parse_llm_json(body.get("response", ""))
-        if not isinstance(llm_json, dict):
-            raise ValueError("Invalid JSON returned by model")
-        paper = str(llm_json.get("paper", "")).strip()
-        if not paper:
-            raise ValueError("Model returned empty paper")
-        return llm_json
+    llm_text = call_llm_text(prompt, timeout=120, json_mode=True)
+    llm_json = parse_llm_json(llm_text)
+    if not isinstance(llm_json, dict):
+        raise ValueError("Invalid JSON returned by model")
+
+    paper = str(llm_json.get("paper", "")).strip()
+    if not paper:
+        raise ValueError("Model returned empty paper")
+    return llm_json
 
 
 def build_fallback_question(subject, index, qtype, difficulty_label):
@@ -345,7 +431,7 @@ def build_topic_analysis(subject, difficulty, count, question_type):
         "question_count": count,
         "question_type": normalized_type,
         "question_type_label": type_label_map[normalized_type],
-        "model": OLLAMA_MODEL,
+        "model": LLM_MODEL,
         "source": "topic-config",
         "generated_at": datetime.utcnow().isoformat() + "Z",
     }
@@ -361,13 +447,13 @@ def build_subject_analysis(clean_text, questions_text):
             "Improves analytical and implementation ability",
             "Used in real software and engineering workflows",
         ],
-        "model": OLLAMA_MODEL,
+        "model": LLM_MODEL,
         "source": "fallback",
         "generated_at": datetime.utcnow().isoformat() + "Z",
     }
 
     try:
-        llm_result = call_ollama_subject_analysis(clean_text, questions_text)
+        llm_result = call_llm_subject_analysis(clean_text, questions_text)
         subject = str(llm_result.get("subject", "")).strip() or subject_fallback
         importance = str(llm_result.get("importance", "")).strip() or analysis["importance"]
         uses_raw = llm_result.get("uses", analysis["uses"])
@@ -470,7 +556,7 @@ def mark_instruction(marks):
     )
 
 
-def call_ollama_ask_answer(question, marks, syllabus_context):
+def call_llm_ask_answer(question, marks, syllabus_context):
     prompt = f"""
 You are AxisStudy AI, an exam-focused doubt solver.
 Rules:
@@ -492,35 +578,22 @@ Answer format instruction:
 {mark_instruction(marks)}
 """
 
-    payload = {
-        "model": OLLAMA_MODEL,
-        "prompt": prompt,
-        "stream": False,
-        "keep_alive": "20m",
-        "options": {
-            "temperature": 0.2,
-            "top_p": 0.9,
-            "num_predict": answer_token_budget(marks),
-        },
-    }
-    data = json.dumps(payload).encode("utf-8")
-    req = urlrequest.Request(
-        "http://127.0.0.1:11434/api/generate",
-        data=data,
-        headers={"Content-Type": "application/json"},
-        method="POST",
+    return call_llm_text(
+        prompt,
+        timeout=75,
+        max_tokens=answer_token_budget(marks),
+        temperature=0.2,
+        top_p=0.9,
     )
-    with urlrequest.urlopen(req, timeout=75) as resp:
-        body = json.loads(resp.read().decode("utf-8"))
-        answer = str(body.get("response", "")).strip()
-        if not answer:
-            raise ValueError("Model returned empty answer")
-        return answer
 
 
 @app.get("/")
 def root():
-    return {"status": "API running"}
+    return {
+        "status": "API running",
+        "llm_backend": LLM_BACKEND,
+        "llm_model": LLM_MODEL,
+    }
 
 
 @app.post("/ask")
@@ -533,16 +606,16 @@ def ask_qurio(payload: AskRequest):
 
     source = "llm"
     try:
-        answer = call_ollama_ask_answer(question, payload.marks, syllabus_context)
+        answer = call_llm_ask_answer(question, payload.marks, syllabus_context)
     except (urlerror.URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError):
         # Retry once without syllabus context to reduce latency for ad-hoc doubts.
         try:
-            answer = call_ollama_ask_answer(question, payload.marks, "")
+            answer = call_llm_ask_answer(question, payload.marks, "")
             source = "llm-fallback"
         except (urlerror.URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError) as exc:
             raise HTTPException(
                 status_code=503,
-                detail="Unable to generate answer right now. Ensure Ollama is running at http://127.0.0.1:11434.",
+                detail=f"Unable to generate answer right now. {llm_hint()}",
             ) from exc
 
     return {
@@ -647,7 +720,7 @@ def generate_topic_paper(payload: TopicGenerationRequest):
     source = "fallback"
 
     try:
-        llm_result = call_ollama_topic_generation(subject, difficulty_label, payload.count, question_type)
+        llm_result = call_llm_topic_generation(subject, difficulty_label, payload.count, question_type)
         questions_text = str(llm_result.get("paper", "")).strip()
         llm_rationale = str(llm_result.get("rationale", "")).strip()
         llm_subject = str(llm_result.get("subject", "")).strip()
@@ -699,7 +772,7 @@ def analysis():
             "subject": "",
             "importance": "",
             "uses": [],
-            "model": OLLAMA_MODEL,
+            "model": LLM_MODEL,
             "source": "empty",
             "generated_at": "",
         }

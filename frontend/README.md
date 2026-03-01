@@ -38,3 +38,5 @@ You must deploy backend separately and configure frontend with that public URL.
 3. Redeploy frontend after adding env var.
 
 Without this, deployed users will see backend connection errors.
+
+For full beginner-friendly steps, see [`../DEPLOYMENT_BEGINNER.md`](../DEPLOYMENT_BEGINNER.md).
