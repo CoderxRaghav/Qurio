@@ -9,7 +9,10 @@ const normalizeBaseUrl = (value?: string): string | null => {
   return trimmed.replace(/\/+$/, "");
 };
 
-const DEFAULT_BASE_URLS = ["/api", "http://127.0.0.1:8000", "http://localhost:8000"];
+const IS_DEV = import.meta.env.DEV;
+const DEFAULT_BASE_URLS = IS_DEV
+  ? ["/api", "http://127.0.0.1:8000", "http://localhost:8000"]
+  : ["/api"];
 const configuredBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL);
 const API_BASE_URLS = configuredBaseUrl
   ? [configuredBaseUrl, ...DEFAULT_BASE_URLS.filter((url) => url !== configuredBaseUrl)]
@@ -17,7 +20,9 @@ const API_BASE_URLS = configuredBaseUrl
 
 const buildNetworkError = () =>
   new Error(
-    `Unable to contact the AI backend. Start FastAPI on http://127.0.0.1:8000, then refresh and try again.`,
+    IS_DEV
+      ? "Unable to contact the AI backend. Start FastAPI on http://127.0.0.1:8000, then refresh and try again."
+      : "Unable to contact the AI backend. This deployed site needs a public backend URL (VITE_API_BASE_URL).",
   );
 
 const buildUrl = (baseUrl: string, path: string) => {
@@ -119,6 +124,10 @@ export interface AskQurioResponse {
 }
 
 const getErrorMessage = async (response: Response): Promise<string> => {
+  if (!IS_DEV && response.status === 404 && response.url.includes("/api/")) {
+    return "AI backend is not connected for this deployed site. Set VITE_API_BASE_URL to a public backend URL and redeploy.";
+  }
+
   try {
     const data = await response.json();
     if (typeof data?.detail === "string") {

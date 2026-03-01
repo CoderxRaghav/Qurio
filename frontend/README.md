@@ -26,3 +26,15 @@ The dev server runs on `http://localhost:8080`.
 - Vite
 - Tailwind CSS
 - shadcn/ui
+
+## Deployment (Vercel)
+
+For public users (mobile/desktop), the frontend cannot call `127.0.0.1:8000`.
+You must deploy backend separately and configure frontend with that public URL.
+
+1. Deploy FastAPI backend to a public host (Render/Railway/VM/etc).
+2. In Vercel project settings, add env var:
+   - `VITE_API_BASE_URL=https://your-public-backend-domain.com`
+3. Redeploy frontend after adding env var.
+
+Without this, deployed users will see backend connection errors.
