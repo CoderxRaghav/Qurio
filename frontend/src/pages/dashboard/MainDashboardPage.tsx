@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, CirclePlay, Gauge, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Gauge, Lock, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const MainDashboardPage = () => {
@@ -14,15 +14,7 @@ const MainDashboardPage = () => {
               </div>
               <p className="text-2xl font-bold text-slate-100 lg:text-3xl">AxisStudy AI</p>
             </div>
-            <div className="hidden items-center gap-10 text-lg text-slate-300 xl:flex">
-              <span>Features</span>
-              <span>Solutions</span>
-              <span>Pricing</span>
-            </div>
             <div className="flex items-center gap-4 self-start lg:self-auto">
-              <Link to="/login" className="text-base font-semibold text-slate-200 transition-colors hover:text-cyan-300 lg:text-lg">
-                Login
-              </Link>
               <Link
                 to="/dashboard/upload"
                 className="inline-flex items-center rounded-full bg-cyan-400 px-5 py-2.5 text-base font-bold text-slate-900 shadow-[0_8px_25px_rgba(34,211,238,0.35)] transition-transform hover:scale-[1.02] lg:px-7 lg:py-3 lg:text-lg"
@@ -53,13 +45,6 @@ const MainDashboardPage = () => {
                 >
                   Start Researching <ArrowRight className="h-5 w-5" />
                 </Link>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-3 rounded-full border border-cyan-400/35 bg-slate-950/35 px-7 py-4 text-xl font-semibold text-slate-200 transition-colors hover:border-cyan-300/60 md:px-8 md:py-5 md:text-2xl"
-                >
-                  <CirclePlay className="h-6 w-6 text-cyan-300" />
-                  View Demo
-                </button>
               </div>
             </div>
 
