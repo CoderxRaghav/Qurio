@@ -15,6 +15,7 @@ If frontend is public but backend is only on your laptop, users will get connect
    - Build Command: `pip install -r requirements.txt`
    - Start Command: `uvicorn api:app --host 0.0.0.0 --port $PORT`
 4. Add environment variables:
+   - `PYTHON_VERSION=3.11.11`
    - `LLM_BACKEND=openai_compatible`
    - `LLM_BASE_URL=https://openrouter.ai/api/v1` (or your provider base URL)
    - `LLM_MODEL=meta-llama/llama-3.1-8b-instruct:free` (or your chosen model)
