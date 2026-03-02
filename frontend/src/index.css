@@ -162,6 +162,23 @@
     border-color: hsl(195 80% 50% / 0.3);
   }
 
+  .btn-google {
+    background: linear-gradient(180deg, #ffffff 0%, #f2f7ff 100%);
+    color: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 0 26px rgba(255, 255, 255, 0.25),
+      0 10px 30px rgba(148, 163, 184, 0.25);
+    transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-google:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 38px rgba(255, 255, 255, 0.4),
+      0 14px 36px rgba(148, 163, 184, 0.3);
+  }
+
   .input-glass {
     background: hsl(0 0% 100% / 0.03);
     border: 1px solid hsl(var(--glass-border));
