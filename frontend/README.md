@@ -40,3 +40,20 @@ You must deploy backend separately and configure frontend with that public URL.
 Without this, deployed users will see backend connection errors.
 
 For full beginner-friendly steps, see [`../DEPLOYMENT_BEGINNER.md`](../DEPLOYMENT_BEGINNER.md).
+
+## Firebase Auth Setup (Google + Email/Password)
+
+1. Create a Firebase project in Firebase Console.
+2. Go to `Authentication` -> `Sign-in method` and enable:
+   - `Google`
+   - `Email/Password`
+3. In Firebase project settings, create a Web App and copy Firebase config values.
+4. Add these env vars in Vercel (or local `.env`):
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+5. Add your Vercel domain in Firebase -> Authentication -> Settings -> Authorized domains.
+6. Redeploy frontend.

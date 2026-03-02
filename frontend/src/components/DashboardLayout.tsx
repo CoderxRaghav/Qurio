@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, Link } from "react-router-dom";
+import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, BarChart3, History, Settings, ChevronLeft, ChevronRight, LogOut, Brain, FileText, LayoutDashboard, MessageSquareText, Plane, Menu, X,
 } from "lucide-react";
-import AquaticBackground from "./AquaticBackground";
 import Footer from "./Footer";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -22,10 +22,17 @@ const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="min-h-screen flex bg-background overflow-x-hidden">
@@ -85,13 +92,14 @@ const DashboardLayout = () => {
         </nav>
 
         <div className="p-2 border-t border-border space-y-1">
-          <Link
-            to="/login"
+          <button
+            type="button"
+            onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           >
             <LogOut className="w-5 h-5 shrink-0" />
             {!collapsed && <span>Log out</span>}
-          </Link>
+          </button>
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors w-full"
@@ -162,13 +170,14 @@ const DashboardLayout = () => {
               </nav>
 
               <div className="p-2 border-t border-border">
-                <Link
-                  to="/login"
+                <button
+                  type="button"
+                  onClick={handleLogout}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 >
                   <LogOut className="w-5 h-5 shrink-0" />
                   <span>Log out</span>
-                </Link>
+                </button>
               </div>
             </motion.aside>
           </>
