@@ -15,7 +15,9 @@ const DEFAULT_BASE_URLS = IS_DEV
   : ["/api"];
 const configuredBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL);
 const API_BASE_URLS = configuredBaseUrl
-  ? [configuredBaseUrl, ...DEFAULT_BASE_URLS.filter((url) => url !== configuredBaseUrl)]
+  ? (IS_DEV
+      ? [configuredBaseUrl, ...DEFAULT_BASE_URLS.filter((url) => url !== configuredBaseUrl)]
+      : [configuredBaseUrl])
   : DEFAULT_BASE_URLS;
 
 const buildNetworkError = () =>
@@ -30,7 +32,7 @@ const buildUrl = (baseUrl: string, path: string) => {
   return `${baseUrl}${normalizedPath}`;
 };
 
-const isFallbackStatus = (status: number) => [404, 502, 503, 504].includes(status);
+const isFallbackStatus = (status: number) => [404, 502, 504].includes(status);
 
 export interface UploadResponse {
   message: string;
