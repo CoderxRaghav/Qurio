@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Gauge, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Gauge, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const MainDashboardPage = () => {
@@ -123,14 +123,90 @@ const MainDashboardPage = () => {
             <div className="relative h-full rounded-2xl border border-cyan-300/15 bg-[linear-gradient(150deg,rgba(4,16,25,0.9),rgba(2,12,21,0.95))] p-4">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(36,208,228,0.2),transparent_55%)]" />
               <div className="relative h-full w-full overflow-hidden rounded-xl border border-cyan-400/10 bg-[linear-gradient(160deg,rgba(7,32,46,0.22),rgba(4,19,29,0.32))]">
-                <div className="absolute left-[6%] top-[22%] h-28 w-36 rounded-[52%_48%_42%_58%] border border-cyan-200/35 bg-cyan-300/10 blur-[0.2px]" />
-                <div className="absolute left-[36%] top-[18%] h-40 w-52 rounded-[46%_54%_52%_48%] border border-cyan-200/30 bg-cyan-300/10" />
-                <div className="absolute left-[68%] top-[24%] h-32 w-[6.5rem] rounded-[58%_42%_56%_44%] border border-cyan-200/30 bg-cyan-300/10" />
-                <div className="absolute left-[40%] top-[58%] h-[8.5rem] w-[7.5rem] rounded-[62%_38%_45%_55%] border border-cyan-200/30 bg-cyan-300/10" />
-                <div className="absolute left-[18%] top-[67%] h-20 w-24 rounded-[54%_46%_53%_47%] border border-cyan-200/25 bg-cyan-300/10" />
-                <div className="absolute left-[74%] top-[71%] h-16 w-20 rounded-[60%_40%_52%_48%] border border-cyan-200/25 bg-cyan-300/10" />
+                <svg
+                  viewBox="0 0 800 460"
+                  aria-hidden="true"
+                  className="absolute inset-0 h-full w-full opacity-90"
+                >
+                  <defs>
+                    <linearGradient id="continentFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(56,189,248,0.26)" />
+                      <stop offset="100%" stopColor="rgba(34,211,238,0.08)" />
+                    </linearGradient>
+                    <linearGradient id="routeStroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="rgba(125,211,252,0.12)" />
+                      <stop offset="50%" stopColor="rgba(56,189,248,0.7)" />
+                      <stop offset="100%" stopColor="rgba(125,211,252,0.12)" />
+                    </linearGradient>
+                  </defs>
+
+                  <path
+                    d="M84 176 L150 142 L248 156 L280 185 L244 219 L168 228 L110 211 Z"
+                    fill="url(#continentFill)"
+                    stroke="rgba(125,211,252,0.45)"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M302 154 L372 124 L482 140 L548 180 L520 224 L444 245 L348 230 L292 192 Z"
+                    fill="url(#continentFill)"
+                    stroke="rgba(125,211,252,0.45)"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M571 170 L632 146 L706 158 L732 196 L702 228 L646 239 L584 220 Z"
+                    fill="url(#continentFill)"
+                    stroke="rgba(125,211,252,0.45)"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M352 280 L408 270 L440 302 L436 354 L392 376 L342 360 L326 316 Z"
+                    fill="url(#continentFill)"
+                    stroke="rgba(125,211,252,0.42)"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M642 314 L684 301 L722 322 L716 356 L682 373 L642 359 L626 335 Z"
+                    fill="url(#continentFill)"
+                    stroke="rgba(125,211,252,0.4)"
+                    strokeWidth="2"
+                  />
+
+                  <path
+                    d="M190 194 C278 142 370 146 452 190"
+                    fill="none"
+                    stroke="url(#routeStroke)"
+                    strokeWidth="2.4"
+                    strokeDasharray="6 7"
+                  />
+                  <path
+                    d="M452 192 C533 147 607 155 666 196"
+                    fill="none"
+                    stroke="url(#routeStroke)"
+                    strokeWidth="2.4"
+                    strokeDasharray="6 7"
+                  />
+                  <path
+                    d="M404 196 C402 236 396 274 384 322"
+                    fill="none"
+                    stroke="url(#routeStroke)"
+                    strokeWidth="2.4"
+                    strokeDasharray="6 7"
+                  />
+                  <path
+                    d="M520 228 C590 252 636 288 666 338"
+                    fill="none"
+                    stroke="url(#routeStroke)"
+                    strokeWidth="2.4"
+                    strokeDasharray="6 7"
+                  />
+                </svg>
+
                 <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(153,246,228,0.15)_1px,transparent_1px)] [background-size:26px_26px] opacity-55" />
-                <span className="absolute left-[65%] top-[42%] h-3.5 w-3.5 rounded-full bg-slate-50 shadow-[0_0_16px_rgba(255,255,255,0.8)]" />
+                <span className="absolute left-[22%] top-[41%] h-3 w-3 rounded-full bg-cyan-200 shadow-[0_0_14px_rgba(103,232,249,0.95)]" />
+                <span className="absolute left-[48%] top-[40%] h-3.5 w-3.5 rounded-full bg-slate-50 shadow-[0_0_16px_rgba(255,255,255,0.85)]" />
+                <span className="absolute left-[70%] top-[42%] h-3 w-3 rounded-full bg-cyan-200 shadow-[0_0_14px_rgba(103,232,249,0.95)]" />
+                <span className="absolute left-[45%] top-[70%] h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(125,211,252,0.95)]" />
+                <span className="absolute left-[72%] top-[76%] h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(125,211,252,0.95)]" />
               </div>
             </div>
           </div>
@@ -150,16 +226,6 @@ const MainDashboardPage = () => {
                 <div>
                   <p className="text-xl font-semibold text-slate-100 lg:text-3xl">Real-time Indexing</p>
                   <p className="text-base text-slate-400 lg:text-2xl">Updates every 45 milliseconds</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-5 rounded-3xl border border-cyan-300/15 bg-cyan-900/20 px-5 py-5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-300">
-                  <Lock className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-xl font-semibold text-slate-100 lg:text-3xl">Enterprise Grade Security</p>
-                  <p className="text-base text-slate-400 lg:text-2xl">SOC2 Type II compliant</p>
                 </div>
               </div>
             </div>
